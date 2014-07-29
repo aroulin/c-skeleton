@@ -1,4 +1,4 @@
-tinyOS
-======
+c-skeleton
+==========
 
-A tiny OS
+A C skeleton project
