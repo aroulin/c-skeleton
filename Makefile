@@ -26,9 +26,13 @@ all: $(BUILD_DIR)/$(PROJECT)
 $(BUILD_DIR)/$(PROJECT): $(C_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
 
+C_DEPS := $(C_OBJECTS:.o=.d)
+
+-include $(C_DEPS)
+
 $(C_OBJECTS): $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) -c $^ -o $@ $(CFLAGS) $(C_HEADERS)
+	$(CC) -c $(CFLAGS) $(C_HEADERS) -MMD -o $@ $<
 
 clean:
 	rm -rf $(BUILD_DIR)
