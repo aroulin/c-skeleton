@@ -13,7 +13,10 @@ INCLUDE_DIR = include
 
 # - Do not edit below this line unless you know what you are doing -
 
-C_HEADERS := $(addprefix -I, $(sort $(dir $(shell find . -name '*.h' -not -path "./$(BUILD_DIR)/*"))))
+# Include directories
+C_HEADERS := -I$(INCLUDE_DIR)
+# Uncomment if you want include directories for all headers
+# C_HEADERS := $(addprefix -I, $(sort $(dir $(shell find . -name '*.h' -not -path "./$(BUILD_DIR)/*"))))
 
 C_SOURCES := $(shell find . -name '*.c' -not -path "./$(BUILD_DIR)/*")
 C_OBJECTS := $(foreach file, $(C_SOURCES), $(BUILD_DIR)/$(basename $(file)).o)
