@@ -23,16 +23,19 @@ C_OBJECTS := $(foreach file, $(C_SOURCES), $(BUILD_DIR)/$(basename $(file)).o)
 
 all: $(BUILD_DIR)/$(PROJECT)
 
-$(BUILD_DIR)/$(PROJECT): $(C_OBJECTS)
-	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
-
 C_DEPS := $(C_OBJECTS:.o=.d)
-
 -include $(C_DEPS)
 
-$(C_OBJECTS): $(BUILD_DIR)/%.o: %.c
+$(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) -c $(CFLAGS) $(C_HEADERS) -MMD -o $@ $<
+	$(CC) -c $< $(CFLAGS) $(C_HEADERS) -o $@
+
+$(BUILD_DIR)/%.d: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $< $(CFLAGS) $(C_HEADERS) -MM -MT $(basename $@).o -MF $@
+
+$(BUILD_DIR)/$(PROJECT): $(C_OBJECTS)
+	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 clean:
 	rm -rf $(BUILD_DIR)
