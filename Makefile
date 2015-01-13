@@ -3,7 +3,7 @@ PROJECT = my_project
 
 # compiler and linker flags
 CC = gcc
-CFLAGS = -g -O3 -Wall -Wextra -pedantic -ansi
+CFLAGS = -g -O3 -Wall -Wextra -pedantic -ansi -fdiagnostics-color=always
 LDFLAGS =
 LIBS =
 
