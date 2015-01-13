@@ -9,12 +9,12 @@ LIBS =
 
 # Project folders
 BUILD_DIR = build
-INCLUDE_DIR = include
+INCLUDE_DIR = include .
 
 # - Do not edit below this line unless you know what you are doing -
 
 # Include directories
-C_HEADERS := -I$(INCLUDE_DIR)
+C_HEADERS := $(foreach d, $(INCLUDE_DIR), -I$(d))
 # Uncomment if you want include directories for all headers
 # C_HEADERS := $(addprefix -I, $(sort $(dir $(shell find . -name '*.h' -not -path "./$(BUILD_DIR)/*"))))
 
