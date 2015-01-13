@@ -9,20 +9,23 @@ LIBS =
 
 # Project folders
 BUILD_DIR = build
+INCLUDE_DIR = include
 
 # - Do not edit below this line unless you know what you are doing -
+
+C_HEADERS := $(addprefix -I, $(sort $(dir $(shell find . -name '*.h' -not -path "./$(BUILD_DIR)/*"))))
 
 C_SOURCES := $(shell find . -name '*.c' -not -path "./$(BUILD_DIR)/*")
 C_OBJECTS := $(foreach file, $(C_SOURCES), $(BUILD_DIR)/$(basename $(file)).o)
 
-all: $(PROJECT)
+all: $(BUILD_DIR)/$(PROJECT)
 
-$(PROJECT): $(C_OBJECTS)
-	$(CC) -o $(BUILD_DIR)/$@ $^ $(LDFLAGS) $(LIBS)
+$(BUILD_DIR)/$(PROJECT): $(C_OBJECTS)
+	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 $(C_OBJECTS): $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) -c $^ -o $@ $(CFLAGS)
+	$(CC) -c $^ -o $@ $(CFLAGS) $(C_HEADERS)
 
 clean:
 	rm -rf $(BUILD_DIR)
