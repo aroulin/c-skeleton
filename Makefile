@@ -1,57 +1,25 @@
-CFLAGS=-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
-LIBS=-ldl $(OPTLIBS)
-PREFIX?=/usr/local
+# Executable or library name
+PROJECT=my_project
 
-SOURCES=$(wildcard src/**/*.c src/*.c)
-OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
+# compiler and linker flags
+CC=gcc
+CFLAGS=-g -O3 -Wall -Wextra -pedantic -ansi
+LFLAGS=
+LIBS=
+DEPENDENCY_FLAGS=-MM
 
-TEST_SRC=$(wildcard tests/*_tests.c)
-TESTS=$(patsubst %.c,%,$(TEST_SRC))
+# Project organisation
+SRC_DIR=src/
+INC_DIR=include/
+BUILD_DIR=build/
 
-TARGET=build/libYOUR_LIBRARY.a
-SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
+# - Do not edit below this line unless you know what you are doing -
 
-# The target build
-all: $(TARGET) $(SO_TARGET) tests
+# Find all source files
+SRC_FILES=$(foreach d, $(SRC_DIR), $(wildcard $(d)*.[hcs]))
+# Derive an object file from every source file
+OBJECTS=$(patsubst %.[hcs], %.o, $(SRC_FILES))
+# Dependencies
+DEPENDENCIES=$(patsubst %.[hcs], %.d, $(SRC_FILES))
 
-dev: CFLAGS=-g -Isrc -Wall -Wextra $(OPTFLAGS)
-dev: all
 
-$(TARGET): CFLAGS += -fPIC
-$(TARGET): build $(OBJECTS)
-	ar rcs $@ $(OBJECTS)
-	ranlib $@
-
-$(SO_TARGET): $(TARGET) $(OBJECTS)
-	$(CC) -shared -o $@ $(OBJECTS)
-
-build:
-	@mkdir -p build
-	@mkdir -p bin
-
-# The Unit Tests
-.PHONY: tests
-tests: CFLAGS += $(TARGET)
-tests: $(TESTS)
-	sh ./tests/runtests.sh
-
-valgrind:
-	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
-
-# The Cleaner
-clean:
-	rm -rf build $(OBJECTS) $(TESTS)
-	rm -f tests/tests.log
-	find . -name "*.gc*" -exec rm {} \;
-	rm -rf `find . -name "*.dSYM -print"`
-
-# The Install
-install: all
-	install -d $(DESTDIR)/$(PREFIX)/lib/
-	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib
-
-# The Checker
-BADFUNCS='[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)|stpn?cpy|a?sn?printf|byte_)'
-check:
-	@echo Files with potentially dangerous functions.
-	@egrep $(BADFUNCS) $(SOURCES) || true
