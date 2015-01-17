@@ -11,6 +11,7 @@ LIBS =
 # Project folders
 BUILD_DIR = build
 INCLUDE_DIR = include .
+DOC_DIR = doc
 
 # - Do not edit below this line unless you know what you are doing -
 
@@ -22,10 +23,13 @@ C_HEADERS := $(foreach d, $(INCLUDE_DIR), -I$(d))
 C_SOURCES := $(shell find . -name '*.c' -not -path "./$(BUILD_DIR)/*")
 C_OBJECTS := $(foreach file, $(C_SOURCES), $(BUILD_DIR)/$(basename $(file)).o)
 
+
 ASM_SOURCES := $(shell find . -name '*.s' -not -path "./$(BUILD_DIR)/*")
 ASM_OBJECTS := $(foreach file, $(ASM_SOURCES), $(BUILD_DIR)/$(basename $(file)).o)
 
-all: $(BUILD_DIR)/$(PROJECT)
+default: $(BUILD_DIR)/$(PROJECT)
+
+all: doc $(BUILD_DIR)/$(PROJECT)
 
 C_DEPS := $(C_OBJECTS:.o=.d)
 -include $(C_DEPS)
@@ -45,5 +49,8 @@ $(BUILD_DIR)/%.d: %.c
 $(BUILD_DIR)/$(PROJECT): $(C_OBJECTS) $(ASM_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
 
+doc:
+	doxygen
+
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(DOC_DIR)

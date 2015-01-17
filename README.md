@@ -1,18 +1,21 @@
 C-skeleton: one Makefile to rule them all
 =========================================
 
-***Goal***: provide a C Makefile project skeleton to be used for any medium-sized project with build
+Goal
+----
+
+Provide a C Makefile project skeleton to be used for any medium-sized project with build
 dependencies, unit testing, documentation generation and much more !
 
 Project organisation
 --------------------
+Source files (.[hcs]) found in the root folder and in any subfolders (except some special folders listed below) will be compiled into one main executable (or library).
 
+Special folders:
 + build
     * out-of-tree build files
-+ src
-    * .[hcs] files with possible subdirectories
 + include
-    * .h alternative location with possible subdirectories
+    * .h alternative location (in the include path)
 + doc
     * doxygen generated documentation
 + tests
