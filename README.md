@@ -25,7 +25,7 @@ Special folders:
 
 Final target
 ------------
-+ generate either executable, static or dynamic library
++ generate either executable, static or dynamic library (-fPIC flag)
 + only one main function in src/ directory (use #ifdef to have multiple)
 
 Dependencies
@@ -61,5 +61,5 @@ Bonus points
 
 References
 ----------
-+ [1] http://c.learncodethehardway.org/book/ex28.html
++ [1] http://c.learncodethehardway.org
 + [2] http://stackoverflow.com/questions/14844268/makefile-template-for-large-c-project
