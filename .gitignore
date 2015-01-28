@@ -24,5 +24,6 @@
 
 # generated directories
 build
+coverage
 doc/html
 doc/doxygen_*
