@@ -7,8 +7,8 @@ MAIN_FILES = ./src/main.c
 # compiler and linker flags
 CC = gcc
 AS = as
-CFLAGS = -g -O3 -Wall -Wextra -pedantic -ansi -fdiagnostics-color=always
-LDFLAGS =
+CFLAGS = -g -O3 -Wall -Wextra -pedantic -ansi --coverage -fdiagnostics-color=always
+LDFLAGS = --coverage
 LIBS =
 
 # Project folders
@@ -16,6 +16,7 @@ BUILD_DIR = build
 INCLUDE_DIR = include .
 DOC_DIR = doc
 TESTS_DIR = tests
+COV_DIR=coverage
 
 # - Do not edit below this line unless you know what you are doing -
 
@@ -70,10 +71,16 @@ checkstyle:
 
 $(TESTS): $(BUILD_DIR)/%.test: %.c $(C_OBJECTS) $(ASM_OBJECTS)
 	@mkdir -p $(dir $@)
-	$(CC) $< $(TESTS_DEPS) -o $@ $(CFLAGS) $(C_HEADERS) $(LDFLAGS) $(LIBS)
+	$(CC) -c $< $(CFLAGS) $(C_HEADERS) -o $(basename $@).o
+	$(CC) $(basename $@).o $(TESTS_DEPS) -o $@ $(LDFLAGS) $(LIBS)
 
 tests_run: $(TESTS)
 	sh ./tests/run_tests.sh
 
+coverage_run:
+	@mkdir -p $(COV_DIR)
+	lcov --capture --directory $(BUILD_DIR)/ --output-file $(COV_DIR)/coverage.info
+	genhtml $(COV_DIR)/coverage.info --output-directory $(COV_DIR)
+
 clean:
-	rm -rf $(BUILD_DIR) $(DOC_DIR)/html $(DOC_DIR)/doxygen_*
+	rm -rf $(BUILD_DIR) $(DOC_DIR)/html $(DOC_DIR)/doxygen_* $(COV_DIR)
