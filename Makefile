@@ -67,7 +67,8 @@ doc:
 	doxygen $(DOC_DIR)/Doxyfile
 
 checkstyle:
-	for file in $(C_SOURCES) $(C_H_SOURCES) $(TESTS_SOURCES); do \
+	for file in $(C_SOURCES) $(C_HSOURCES) $(TESTS_SOURCES); do \
+		echo Checkstyling $$file; \
 		./$(DOC_DIR)/checkstyle.pl --terse --file --no-tree $$file; \
 	done
 
