@@ -39,6 +39,8 @@ TESTS := $(foreach file, $(TESTS_SOURCES), $(BUILD_DIR)/$(basename $(file)).test
 TESTS_DEPS = $(C_OBJECTS) $(ASM_OBJECTS)
 TESTS_DEPS := $(filter-out $(MAIN_OBJECTS), $(TESTS_DEPS))
 
+.PHONY: default all doc checkstyle tests coverage clean
+
 default: $(BUILD_DIR)/$(PROJECT)
 
 all: doc $(BUILD_DIR)/$(PROJECT)
@@ -61,7 +63,7 @@ $(BUILD_DIR)/%.d: %.c
 $(BUILD_DIR)/$(PROJECT): $(C_OBJECTS) $(ASM_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
 
-documentation:
+doc:
 	doxygen $(DOC_DIR)/Doxyfile
 
 checkstyle:
@@ -74,10 +76,10 @@ $(TESTS): $(BUILD_DIR)/%.test: %.c $(C_OBJECTS) $(ASM_OBJECTS)
 	$(CC) -c $< $(CFLAGS) $(C_HEADERS) -o $(basename $@).o
 	$(CC) $(basename $@).o $(TESTS_DEPS) -o $@ $(LDFLAGS) $(LIBS)
 
-tests_run: $(TESTS)
+tests: $(TESTS)
 	sh ./tests/run_tests.sh
 
-coverage_run:
+coverage:
 	@mkdir -p $(COV_DIR)
 	lcov --capture --directory $(BUILD_DIR)/ --output-file $(COV_DIR)/coverage.info
 	genhtml $(COV_DIR)/coverage.info --output-directory $(COV_DIR)
