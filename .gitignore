@@ -24,4 +24,5 @@
 
 # generated directories
 build
-doc
+doc/html
+doc/doxygen_*

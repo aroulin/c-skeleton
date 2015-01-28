@@ -26,6 +26,7 @@ C_HEADERS := $(foreach d, $(INCLUDE_DIR), -I$(d))
 
 C_SOURCES := $(shell find . -name '*.c' -not -path "./$(BUILD_DIR)/*" -not -path "./$(TESTS_DIR)/*")
 C_OBJECTS := $(foreach file, $(C_SOURCES), $(BUILD_DIR)/$(basename $(file)).o)
+C_HSOURCES := $(shell find . -name '*.h' -not -path "./$(BUILD_DIR)/*" -not -path "./$(TESTS_DIR)/*")
 
 ASM_SOURCES := $(shell find . -name '*.s' -not -path "./$(BUILD_DIR)/*" -not -path "./$(TESTS_DIR)/*")
 ASM_OBJECTS := $(foreach file, $(ASM_SOURCES), $(BUILD_DIR)/$(basename $(file)).o)
@@ -59,8 +60,13 @@ $(BUILD_DIR)/%.d: %.c
 $(BUILD_DIR)/$(PROJECT): $(C_OBJECTS) $(ASM_OBJECTS)
 	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
 
-doc:
-	doxygen
+documentation:
+	doxygen $(DOC_DIR)/Doxyfile
+
+checkstyle:
+	for file in $(C_SOURCES) $(C_H_SOURCES) $(TESTS_SOURCES); do \
+		./$(DOC_DIR)/checkstyle.pl --terse --file --no-tree $$file; \
+	done
 
 $(TESTS): $(BUILD_DIR)/%.test: %.c $(C_OBJECTS) $(ASM_OBJECTS)
 	@mkdir -p $(dir $@)
@@ -70,4 +76,4 @@ tests_run: $(TESTS)
 	sh ./tests/run_tests.sh
 
 clean:
-	rm -rf $(BUILD_DIR) $(DOC_DIR)
+	rm -rf $(BUILD_DIR) $(DOC_DIR)/html $(DOC_DIR)/doxygen_*
